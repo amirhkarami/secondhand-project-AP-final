@@ -1,0 +1,59 @@
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+# دایرکتوری کامپایل جاوا و میون
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# فایل‌های تنظیمات محیط کدنویسی (IntelliJ IDEA)
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# فایل‌های لاگ و موقتی سیستم
+*.log
+.mvn/
+mvnw
+mvnw.cmd
+
+# --- فایل‌های حساس پروژه شما (خیلی مهم) ---
+# فایل تست ریکوئست‌ها که حاوی پسورد و توکن است
+test.http
+
+# فایل‌های دیتابیس SQLite (اگر فایلی با این پسوندها ساخته شده باشد)
+*.db
+*.db-journal
+*.sqlite
