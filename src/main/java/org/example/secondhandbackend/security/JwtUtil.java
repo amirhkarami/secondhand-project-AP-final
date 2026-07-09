@@ -1,34 +1,47 @@
+// src/main/java/org/example/secondhandbackend/security/JwtUtil.java
 package org.example.secondhandbackend.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private final long EXPIRATION_TIME = 86400000;
-    public String generateToken(String username) {
+
+    private final SecretKey key = Keys.hmacShaKeyFor("secondhand-project-super-secret-key-1234567890".getBytes());
+    private final long EXPIRATION_MS = 1000 * 60 * 60 * 24; // 24 ساعت
+
+    public String generateToken(String username, String role) {
         return Jwts.builder()
                 .setSubject(username)
+                .claim("role", role)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(key)
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
+
     public String extractUsername(String token) {
-        return getClaims(token).getSubject();
+        return parseClaims(token).getSubject();
     }
 
-    public boolean isTokenExpired(String token) {
-        return getClaims(token).getExpiration().before(new Date());
+    public String extractRole(String token) {
+        return parseClaims(token).get("role", String.class);
     }
-    private Claims getClaims(String token) {
+
+    public boolean isTokenValid(String token) {
+        try {
+            parseClaims(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    private Claims parseClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()

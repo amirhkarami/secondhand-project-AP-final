@@ -1,0 +1,25 @@
+package org.example.secondhandbackend.model;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
+@Table(name = "product_images")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class ProductImage {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Lob
+    @Column(name = "image_data", length = 3145728, nullable = false)
+    private byte[] imageData;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
+}

@@ -1,3 +1,4 @@
+
 package org.example.secondhandbackend.controller;
 
 import org.example.secondhandbackend.model.RegisterRequest;
@@ -6,28 +7,27 @@ import org.example.secondhandbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+@CrossOrigin
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class AuthController {
     private final UserService userService;
+    //DI
     @Autowired
     public AuthController(UserService userService) {
         this.userService = userService;
     }
+
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
-        String result = userService.registerUser(request);
-        if (result.equals("ERROR")) {
-            return ResponseEntity.badRequest().body(result);
-        }
-        return ResponseEntity.ok(result);
+        userService.registerUser(request);
+        return ResponseEntity.ok("SUCCESS");
     }
+    //the output of this method in case it is valid,is a long string which is a JWT token
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest request) {
-        String result = userService.loginUser(request);
-        if (result.equals("ERROR")) {
-            return ResponseEntity.badRequest().body(result);
-        }
-        return ResponseEntity.ok(result);
+        String token = userService.loginUser(request);
+        return ResponseEntity.ok(token);
     }
 }

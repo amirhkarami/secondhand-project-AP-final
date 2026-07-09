@@ -23,4 +23,6 @@ public class User {
     private String phoneNumber;
     @Column(nullable = false)
     private UserType type;
+    @Column(nullable = false)
+    private boolean isActive;
 }
