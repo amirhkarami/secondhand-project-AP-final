@@ -1,4 +1,4 @@
-// ProductRepository.java - جایگزین کن
+
 package org.example.secondhandbackend.repository;
 
 import org.example.secondhandbackend.model.Product;

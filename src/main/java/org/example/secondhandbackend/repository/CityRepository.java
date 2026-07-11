@@ -9,6 +9,6 @@ import java.util.Optional;
 @Repository
 public interface CityRepository extends JpaRepository<City, Integer> {
 
-    // یک متد کاربردی: پیدا کردن شهر از روی نام آن (برای مواقعی که می‌خواهید بررسی کنید شهر تکراری نباشد)
+    //I added this method for checking if we have duplicate cities
     Optional<City> findByName(String name);
 }

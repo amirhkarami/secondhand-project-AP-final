@@ -1,6 +1,7 @@
-// UserService.java - جایگزین کن (پیام‌های خطای دقیق‌تر برای auth)
+
 package org.example.secondhandbackend.service;
 
+import org.example.secondhandbackend.dto.UserSummaryDto;
 import org.example.secondhandbackend.exception.ApiException;
 import org.example.secondhandbackend.model.LoginRequest;
 import org.example.secondhandbackend.model.RegisterRequest;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -68,4 +70,60 @@ public class UserService {
 
         return jwtUtil.generateToken(user.getUsername(), user.getType().name());
     }
+
+    public List<UserSummaryDto> getAllUsers(String adminUsername) {
+        checkAdmin(adminUsername);
+        return userRepository.findAll().stream()
+                .map(u -> new UserSummaryDto(u.getId(), u.getUsername(), u.getFullName(), u.getType().name(), u.isActive()))
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    public void blockUser(int targetId, String adminUsername) {
+        checkAdmin(adminUsername);
+        User target = userRepository.findById(targetId)
+                .orElseThrow(() -> new ApiException("user not found", 404));
+
+        if (target.getType() == UserType.ADMIN) {
+            throw new ApiException("you cannot block an admin", 400);
+        }
+        if (!target.isActive()) {
+            throw new ApiException("this user is already blocked", 400);
+        }
+        target.setActive(false);
+        userRepository.save(target);
+    }
+
+    public void unblockUser(int targetId, String adminUsername) {
+        checkAdmin(adminUsername);
+        User target = userRepository.findById(targetId)
+                .orElseThrow(() -> new ApiException("user not found", 404));
+
+        if (target.isActive()) {
+            throw new ApiException("user is already unblocked", 400);
+        }
+        target.setActive(true);
+        userRepository.save(target);
+    }
+
+    public void promoteToAdmin(int targetUserId, String requesterUsername) {
+        checkAdmin(requesterUsername);
+        User target = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new ApiException("user not found", 404));
+
+        if (target.getType() == UserType.ADMIN) {
+            throw new ApiException("this user is already an admin", 400);
+        }
+        target.setType(UserType.ADMIN);
+        userRepository.save(target);
+    }
+
+    private void checkAdmin(String username) {
+        User requester = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ApiException("user not found", 404));
+        if (requester.getType() != UserType.ADMIN) {
+            throw new ApiException("you are not admin", 403);
+        }
+    }
+
+
 }

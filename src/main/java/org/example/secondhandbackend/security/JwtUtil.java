@@ -1,4 +1,4 @@
-// src/main/java/org/example/secondhandbackend/security/JwtUtil.java
+
 package org.example.secondhandbackend.security;
 
 import io.jsonwebtoken.*;

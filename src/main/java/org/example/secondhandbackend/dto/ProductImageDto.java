@@ -1,4 +1,4 @@
-// src/main/java/org/example/secondhandbackend/dto/ProductImageDto.java
+
 package org.example.secondhandbackend.dto;
 
 import lombok.AllArgsConstructor;

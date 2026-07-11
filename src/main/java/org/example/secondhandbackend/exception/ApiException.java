@@ -1,4 +1,4 @@
-// src/main/java/org/example/secondhandbackend/exception/ApiException.java
+
 package org.example.secondhandbackend.exception;
 
 public class ApiException extends RuntimeException {

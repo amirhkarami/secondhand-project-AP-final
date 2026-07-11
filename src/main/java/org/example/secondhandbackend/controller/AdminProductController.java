@@ -1,6 +1,7 @@
 
 package org.example.secondhandbackend.controller;
 
+import org.example.secondhandbackend.dto.DashboardDto;
 import org.example.secondhandbackend.dto.ProductSummaryDto;
 import org.example.secondhandbackend.service.ProductService;
 import org.springframework.http.ResponseEntity;
@@ -36,4 +37,12 @@ public class AdminProductController {
         productService.rejectProduct(id, body.get("reason"), authentication.getName());
         return ResponseEntity.ok("advertisement declined");
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteByAdmin(@PathVariable int id, Authentication authentication) {
+        productService.deleteByAdmin(id);
+        return ResponseEntity.ok("advertisement deleted");
+    }
+
+
 }

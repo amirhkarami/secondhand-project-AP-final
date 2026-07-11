@@ -1,22 +1,31 @@
+
 package org.example.secondhandbackend.controller;
 
 import org.example.secondhandbackend.model.City;
-import org.example.secondhandbackend.repository.CityRepository;
+import org.example.secondhandbackend.service.CityService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class CityController {
 
-    private final CityRepository cityRepository;
-    //Bean Injection
-    public CityController(CityRepository cityRepository) {
-        this.cityRepository = cityRepository;
+    private final CityService cityService;
+
+    public CityController(CityService cityService) {
+        this.cityService = cityService;
     }
 
     @GetMapping("/cities")
     public List<City> getAllCities() {
-        return cityRepository.findAll();
+        return cityService.getAll();
+    }
+
+    @PostMapping("/cities")
+    public ResponseEntity<City> createCity(@RequestBody Map<String, String> body) {
+        City city = cityService.create(body.get("name"));
+        return ResponseEntity.ok(city);
     }
 }

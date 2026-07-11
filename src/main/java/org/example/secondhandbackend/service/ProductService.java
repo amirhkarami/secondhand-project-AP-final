@@ -1,6 +1,7 @@
-// ProductService.java - جایگزین کن
+
 package org.example.secondhandbackend.service;
 
+import org.example.secondhandbackend.dto.DashboardDto;
 import org.example.secondhandbackend.dto.ProductDetailDto;
 import org.example.secondhandbackend.dto.ProductImageDto;
 import org.example.secondhandbackend.dto.ProductSummaryDto;
@@ -35,20 +36,20 @@ public class ProductService {
 
     public Product createProduct(String title, String description, long price, int categoryId, int cityId, List<MultipartFile> images, String username) {
         if (title == null || title.isBlank()) {
-            throw new ApiException("عنوان آگهی نمی‌تواند خالی باشد", 400);
+            throw new ApiException("advertisement title cannot be empty", 400);
         }
         if (price <= 0) {
-            throw new ApiException("قیمت واردشده معتبر نیست", 400);
+            throw new ApiException("price is invalid", 400);
         }
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ApiException("کاربر پیدا نشد", 404));
+                .orElseThrow(() -> new ApiException("User not found", 404));
 
         Category category = categoryRepository.findById((long) categoryId)
-                .orElseThrow(() -> new ApiException("دسته‌بندی پیدا نشد", 404));
+                .orElseThrow(() -> new ApiException("Category not found", 404));
 
         City city = cityRepository.findById(cityId)
-                .orElseThrow(() -> new ApiException("شهر پیدا نشد", 404));
+                .orElseThrow(() -> new ApiException("City not found", 404));
 
         Product product = Product.builder()
                 .title(title)
@@ -70,10 +71,14 @@ public class ProductService {
                             .build();
                     productImages.add(image);
                 } catch (IOException e) {
-                    throw new ApiException("خطا در خواندن فایل تصویر", 400);
+                    throw new ApiException("unable to procces image", 400);
                 }
             }
             product.setImages(productImages);
+        }
+        // added in commit num 3.I have forgotten that every advertisement cant have more than 5 images
+        if (images != null && images.size() > 5) {
+            throw new ApiException("Each advertiesment cant have more that 5 images", 400);
         }
 
         return productRepository.save(product);
@@ -84,9 +89,16 @@ public class ProductService {
                 .map(this::toSummaryDto)
                 .collect(Collectors.toList());
     }
+/*
+     I have fixed an issue in commit num 3 which minPrice can be higher than maxPrice
+    and also added the ability to sort */
+    public List<ProductSummaryDto> searchProducts(String keyword, Integer categoryId, Integer cityId,
+                                                  Long minPrice, Long maxPrice, String sortBy) {
+        if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
+            throw new ApiException("minPrice cannot be more than maxPrice", 400);
+        }
 
-    public List<ProductSummaryDto> searchProducts(String keyword, Integer categoryId, Integer cityId, Long minPrice, Long maxPrice) {
-        return productRepository.findByStatus(ProductStatus.ACTIVE).stream()
+        List<Product> result = productRepository.findByStatus(ProductStatus.ACTIVE).stream()
                 .filter(p -> keyword == null || keyword.isBlank()
                         || p.getTitle().toLowerCase().contains(keyword.toLowerCase())
                         || (p.getDescription() != null && p.getDescription().toLowerCase().contains(keyword.toLowerCase())))
@@ -94,8 +106,17 @@ public class ProductService {
                 .filter(p -> cityId == null || (p.getCity() != null && p.getCity().getId() == cityId))
                 .filter(p -> minPrice == null || p.getPrice() >= minPrice)
                 .filter(p -> maxPrice == null || p.getPrice() <= maxPrice)
-                .map(this::toSummaryDto)
-                .collect(Collectors.toList());
+                .collect(java.util.stream.Collectors.toList());
+
+        if (sortBy != null) {
+            switch (sortBy) {
+                case "price_asc" -> result.sort((a, b) -> Long.compare(a.getPrice(), b.getPrice()));
+                case "price_desc" -> result.sort((a, b) -> Long.compare(b.getPrice(), a.getPrice()));
+                case "newest" -> result.sort((a, b) -> Integer.compare(b.getId(), a.getId()));
+            }
+        }
+
+        return result.stream().map(this::toSummaryDto).collect(java.util.stream.Collectors.toList());
     }
 
     public ProductDetailDto getProductDetails(int id, String requesterUsername) {
@@ -180,5 +201,110 @@ public class ProductService {
                 p.getCategory() != null ? p.getCategory().getName() : null,
                 p.getStatus().name()
         );
+    }
+
+
+
+    public void editProduct(int id, String title, String description, Long price,
+                            Integer categoryId, Integer cityId, String username) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ApiException("advertisement not found", 404));
+
+        User requester = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ApiException("user not found", 404));
+
+        boolean isOwner = product.getUser().getUsername().equals(username);
+        boolean isAdmin = requester.getType() == UserType.ADMIN;
+
+        if (!isOwner && !isAdmin) {
+            throw new ApiException("you do not own this advertisement", 403);
+        }
+
+        if (product.getStatus() == ProductStatus.SOLD || product.getStatus() == ProductStatus.DELETED) {
+            throw new ApiException("advertisement is sold or deleted", 400);
+        }
+
+        if (title != null && !title.isBlank()) {
+            product.setTitle(title);
+        }
+        if (description != null) {
+            product.setDescription(description);
+        }
+        if (price != null) {
+            if (price <= 0) {
+                throw new ApiException("price should be higher than 0", 400);
+            }
+            product.setPrice(price);
+        }
+        if (categoryId != null) {
+            Category category = categoryRepository.findById((long) categoryId)
+                    .orElseThrow(() -> new ApiException("category not found", 404));
+            product.setCategory(category);
+        }
+        if (cityId != null) {
+            City city = cityRepository.findById(cityId)
+                    .orElseThrow(() -> new ApiException("city not found", 404));
+            product.setCity(city);
+        }
+
+        product.setStatus(ProductStatus.PENDING);
+        product.setRejectReason(null);
+
+        productRepository.save(product);
+    }
+
+    public void deleteProduct(int id, String username) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ApiException("advertisement not found", 404));
+
+        if (!product.getUser().getUsername().equals(username)) {
+            throw new ApiException("you are not the owner of this advertisement", 403);
+        }
+
+        if (product.getStatus() == ProductStatus.DELETED) {
+            throw new ApiException("advertisement already deleted", 400);
+        }
+
+        product.setStatus(ProductStatus.DELETED);
+        productRepository.save(product);
+    }
+
+    public void markAsSold(int id, String username) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ApiException("advertisement not found", 404));
+
+        if (!product.getUser().getUsername().equals(username)) {
+            throw new ApiException("you are not the owner of this advertisement", 403);
+        }
+
+        if (product.getStatus() != ProductStatus.ACTIVE) {
+            throw new ApiException("advertisement is not ACTIVE", 400);
+        }
+
+        product.setStatus(ProductStatus.SOLD);
+        productRepository.save(product);
+    }
+
+    public void deleteByAdmin(int id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ApiException("advertisement not found", 404));
+        product.setStatus(ProductStatus.DELETED);
+        productRepository.save(product);
+    }
+
+    public DashboardDto getDashboard(String adminUsername) {
+        User admin = userRepository.findByUsername(adminUsername)
+                .orElseThrow(() -> new ApiException("user not found", 404));
+        if (admin.getType() != UserType.ADMIN) {
+            throw new ApiException("you are not admin", 403);
+        }
+
+        long totalUsers = userRepository.count();
+        long totalProducts = productRepository.count();
+        long pendingProducts = productRepository.findByStatus(ProductStatus.PENDING).size();
+        long activeProducts = productRepository.findByStatus(ProductStatus.ACTIVE).size();
+        long blockedUsers = userRepository.findAll().stream().filter(u -> !u.isActive()).count();
+
+        return new DashboardDto(totalUsers, totalProducts, pendingProducts, activeProducts, blockedUsers);
     }
 }

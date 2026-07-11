@@ -12,6 +12,27 @@ every error for any request that is sent to backend has a response in the format
 "status":error code
 }
 
+
+commit 3:
+So I forgot that there is no way to add an admin without accesing the database directly.
+I have created a defult admin
+
+{"username":admin,"password":adminPass}
+
+so I have added 
+POST  /api/admin/users/{id}/promote/
+
+Responses:
+200 User have been promoted to admin
+
+Error:
+
+400 user is already admin
+401 unauthiorized
+403 you are not admin
+404 user not found
+
+
 1-Auth
 POST /auth/register *no need for authorization
 Body:
@@ -386,7 +407,7 @@ classDiagram
 direction TB
 
 
-
+```mermaid
     class User {
         -int id
         -String username
@@ -501,9 +522,11 @@ direction TB
     Product "" -- "" AdReview
     User "" --> "" AdReview : admin
     AdReview "" -- "" ReviewResult
+```
 
-
-
+A big shout out to freecodecamp .They created free tutorials which made this projects easier for me
+https://www.youtube.com/watch?v=5rNk7m_zlAg&t=12446s
+https://www.youtube.com/watch?v=oGhc5Z-WJSw&t=463s&pp=ygUQSldUIGZyZWVjb2RlY2FtcA%3D%3D
 
 
 

@@ -1,4 +1,4 @@
-// src/main/java/org/example/secondhandbackend/exception/GlobalExceptionHandler.java
+
 package org.example.secondhandbackend.exception;
 
 import org.example.secondhandbackend.dto.ErrorResponse;

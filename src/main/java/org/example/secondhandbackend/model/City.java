@@ -14,8 +14,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class City {
 
-    @Id // 👈 این انوتیشن دقیقاً جا افتاده است
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // 👈 این هم برای اتوایکرومنت شدن شناسه است
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Column(unique = true)
     private String name;
