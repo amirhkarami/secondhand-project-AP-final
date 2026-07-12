@@ -1,4 +1,4 @@
-
+// controller/AdminDashboardController.java
 package org.example.secondhandbackend.controller;
 
 import org.example.secondhandbackend.dto.DashboardDto;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/admin/dashboard")
 public class AdminDashboardController {
-
     private final ProductService productService;
 
     public AdminDashboardController(ProductService productService) {

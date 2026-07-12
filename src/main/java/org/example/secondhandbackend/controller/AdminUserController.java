@@ -1,4 +1,3 @@
-
 package org.example.secondhandbackend.controller;
 
 import org.example.secondhandbackend.dto.UserSummaryDto;
@@ -13,7 +12,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin/users")
 public class AdminUserController {
-
     private final UserService userService;
 
     public AdminUserController(UserService userService) {

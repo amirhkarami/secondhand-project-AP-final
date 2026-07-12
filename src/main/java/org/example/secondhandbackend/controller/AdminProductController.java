@@ -1,14 +1,16 @@
 
+
+
+// controller/AdminProductController.java
 package org.example.secondhandbackend.controller;
 
-import org.example.secondhandbackend.dto.DashboardDto;
 import org.example.secondhandbackend.dto.ProductSummaryDto;
 import org.example.secondhandbackend.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+        import java.util.List;
 import java.util.Map;
 //all of methods which are included in this file are only availabe as admin
 @CrossOrigin
@@ -43,6 +45,4 @@ public class AdminProductController {
         productService.deleteByAdmin(id);
         return ResponseEntity.ok("advertisement deleted");
     }
-
-
 }
