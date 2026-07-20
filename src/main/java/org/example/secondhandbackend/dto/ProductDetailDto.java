@@ -17,6 +17,7 @@ public class ProductDetailDto {
     private String categoryName;
     private String status;
     private String rejectReason;
+    private int sellerId;
     private String sellerUsername;
     private String sellerFullName;
     private boolean isOwner;

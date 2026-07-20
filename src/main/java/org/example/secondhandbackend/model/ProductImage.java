@@ -15,9 +15,9 @@ public class ProductImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
-    @Column(name = "image_data", length = 3145728, nullable = false)
-    private byte[] imageData;
+
+    @Column(nullable = false)
+    private String imagePath;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)

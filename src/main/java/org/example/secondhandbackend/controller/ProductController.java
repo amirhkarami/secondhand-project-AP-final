@@ -64,24 +64,6 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductDetails(id, username));
     }
 
-
-    @PutMapping("/{id}")
-    public ResponseEntity<String> editProduct(
-            @PathVariable int id,
-            @RequestBody Map<String, Object> body,
-            Authentication authentication) {
-        if (authentication == null) throw new ApiException("UNAUTHORIZED", 401);
-
-        String title = (String) body.get("title");
-        String description = (String) body.get("description");
-        Long price = body.get("price") != null ? Long.valueOf(body.get("price").toString()) : null;
-        Integer categoryId = body.get("categoryId") != null ? Integer.valueOf(body.get("categoryId").toString()) : null;
-        Integer cityId = body.get("cityId") != null ? Integer.valueOf(body.get("cityId").toString()) : null;
-
-        productService.editProduct(id, title, description, price, categoryId, cityId, authentication.getName());
-        return ResponseEntity.ok("advertisement edited");
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProduct(@PathVariable int id, Authentication authentication) {
         if (authentication == null) throw new ApiException("UNAUTHORIZED", 401);
@@ -89,10 +71,19 @@ public class ProductController {
         return ResponseEntity.ok("advertisement deleted");
     }
 
-    @PutMapping("/{id}/sold")
-    public ResponseEntity<String> markAsSold(@PathVariable int id, Authentication authentication) {
-        if (authentication == null) throw new ApiException("UNAUTHORIZED", 401);
-        productService.markAsSold(id, authentication.getName());
-        return ResponseEntity.ok("advertisement sold");
-    }
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> editProduct(
+            @PathVariable int id,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) Long price,
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(required = false) Integer cityId,
+            @RequestParam(required = false) List<MultipartFile> images,
+            Authentication authentication){
+        if (authentication == null)
+            throw new ApiException("UNAUTHORIZED",401);
+        productService.editProduct(id, title, description, price, categoryId, cityId, images, authentication.getName());
+        return ResponseEntity.ok("advertisement edited");}
+
 }

@@ -11,9 +11,8 @@ import org.example.secondhandbackend.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.awt.*;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,15 +22,25 @@ public class ProductService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final CityRepository cityRepository;
+    private final CloudinaryService cloudinaryService;
 
-    public ProductService(ProductRepository productRepository,
-                          UserRepository userRepository,
-                          CategoryRepository categoryRepository,
-                          CityRepository cityRepository) {
+    public ProductService(ProductRepository productRepository, UserRepository userRepository, CategoryRepository categoryRepository, CityRepository cityRepository, CloudinaryService cloudinaryService) {
         this.productRepository = productRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.cityRepository = cityRepository;
+        this.cloudinaryService = cloudinaryService;
+    }
+
+    private boolean categoryMatches(Category category, Long targetCategoryId) {
+        Category current = category;
+        while (current != null) {
+            if (current.getId().equals(targetCategoryId)) {
+                return true;
+            }
+            current = current.getSuperCategory();
+        }
+        return false;
     }
 
     public Product createProduct(String title, String description, long price, int categoryId, int cityId, List<MultipartFile> images, String username) {
@@ -65,13 +74,14 @@ public class ProductService {
             List<ProductImage> productImages = new ArrayList<>();
             for (MultipartFile file : images) {
                 try {
+                    String imageUrl = cloudinaryService.upload(file);
                     ProductImage image = ProductImage.builder()
-                            .imageData(file.getBytes())
+                            .imagePath(imageUrl)
                             .product(product)
                             .build();
                     productImages.add(image);
-                } catch (IOException e) {
-                    throw new ApiException("unable to procces image", 400);
+                } catch (Exception e) {
+                    throw new ApiException("unable to process image", 400);
                 }
             }
             product.setImages(productImages);
@@ -89,9 +99,9 @@ public class ProductService {
                 .map(this::toSummaryDto)
                 .collect(Collectors.toList());
     }
-/*
-     I have fixed an issue in commit num 3 which minPrice can be higher than maxPrice
-    and also added the ability to sort */
+    /*
+         I have fixed an issue in commit num 3 which minPrice can be higher than maxPrice
+        and also added the ability to sort */
     public List<ProductSummaryDto> searchProducts(String keyword, Integer categoryId, Integer cityId,
                                                   Long minPrice, Long maxPrice, String sortBy) {
         if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
@@ -102,7 +112,7 @@ public class ProductService {
                 .filter(p -> keyword == null || keyword.isBlank()
                         || p.getTitle().toLowerCase().contains(keyword.toLowerCase())
                         || (p.getDescription() != null && p.getDescription().toLowerCase().contains(keyword.toLowerCase())))
-                .filter(p -> categoryId == null || (p.getCategory() != null && p.getCategory().getId().equals((long) categoryId.intValue())))
+                .filter(p -> categoryId == null || categoryMatches(p.getCategory(), (long) categoryId.intValue()))
                 .filter(p -> cityId == null || (p.getCity() != null && p.getCity().getId() == cityId))
                 .filter(p -> minPrice == null || p.getPrice() >= minPrice)
                 .filter(p -> maxPrice == null || p.getPrice() <= maxPrice)
@@ -120,9 +130,8 @@ public class ProductService {
     }
 
     public ProductDetailDto getProductDetails(int id, String requesterUsername) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ApiException("Advertisement not found", 404));
-
+        Product product = productRepository.findById(id).orElseThrow(() -> new ApiException("Advertisement not found", 404));
+        //String imagePath = product.getImages().getFirst().getImagePath();
         boolean isOwner = requesterUsername != null && product.getUser().getUsername().equals(requesterUsername);
 
         boolean requesterIsAdmin = false;
@@ -138,8 +147,12 @@ public class ProductService {
 
         List<ProductImageDto> imageDtos = new ArrayList<>();
         if (product.getImages() != null) {
+
             for (ProductImage img : product.getImages()) {
-                imageDtos.add(new ProductImageDto(img.getId(), Base64.getEncoder().encodeToString(img.getImageData())));
+                System.out.println(
+                        "DETAIL IMAGE = " + img.getImagePath()
+                );
+                imageDtos.add(new ProductImageDto(img.getId(), img.getImagePath()));
             }
         }
 
@@ -152,11 +165,14 @@ public class ProductService {
                 product.getCategory() != null ? product.getCategory().getName() : null,
                 product.getStatus().name(),
                 product.getRejectReason(),
+                product.getUser().getId(),
                 product.getUser().getUsername(),
                 product.getUser().getFullName(),
                 isOwner,
                 imageDtos
         );
+
+
     }
 
     public void approveProduct(int id, String adminUsername) {
@@ -192,21 +208,43 @@ public class ProductService {
         }
     }
 
+    //    private ProductSummaryDto toSummaryDto(Product p) {
+//        return new ProductSummaryDto(
+//                p.getId(),
+//                p.getTitle(),
+//                p.getPrice(),
+//                p.getCity().getName(),
+//                p.getCategory() != null ? p.getCategory().getName() : null,
+//                p.getStatus().name()
+//        );
+//    }
     private ProductSummaryDto toSummaryDto(Product p) {
+
+        String imagePath = null;
+
+        if (p.getImages() != null && !p.getImages().isEmpty()) {
+            imagePath = p.getImages()
+                    .get(0)
+                    .getImagePath();
+        }
+
+
         return new ProductSummaryDto(
                 p.getId(),
                 p.getTitle(),
                 p.getPrice(),
                 p.getCity().getName(),
                 p.getCategory() != null ? p.getCategory().getName() : null,
-                p.getStatus().name()
+                p.getStatus().name(),
+                imagePath,
+                p.getUser() != null ? p.getUser().getUsername() : null
         );
     }
 
 
 
-    public void editProduct(int id, String title, String description, Long price,
-                            Integer categoryId, Integer cityId, String username) {
+
+    public void editProduct(int id, String title, String description, Long price, Integer categoryId, Integer cityId, List<MultipartFile> images, String username) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ApiException("advertisement not found", 404));
 
@@ -251,6 +289,31 @@ public class ProductService {
         product.setRejectReason(null);
 
         productRepository.save(product);
+        // this is for edit
+        if (images != null && !images.isEmpty()) {
+
+            List<ProductImage> productImages = new ArrayList<>();
+
+            for (MultipartFile file : images) {
+
+                try {
+
+                    String imageUrl = cloudinaryService.upload(file);
+
+                    ProductImage image = ProductImage.builder()
+                            .imagePath(imageUrl)
+                            .product(product)
+                            .build();
+
+                    productImages.add(image);
+
+                } catch (Exception e) {
+                    throw new ApiException("unable to process image",400);
+                }
+            }
+
+            product.setImages(productImages);
+        }
     }
 
     public void deleteProduct(int id, String username) {

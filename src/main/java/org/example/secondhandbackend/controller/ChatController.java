@@ -19,6 +19,23 @@ public class ChatController {
         this.chatService = chatService;
     }
 
+    @PostMapping("/conversations/{conversationId}/reply")
+    public ResponseEntity<SendMessageResponseDto> replyMessage(
+            @PathVariable Long conversationId,
+            @RequestBody SendMessageRequestDto body,
+            Authentication authentication)
+    {
+
+        return ResponseEntity.ok(
+                chatService.replyMessage(
+                        conversationId,
+                        body.getContent(),
+                        authentication.getName()
+                )
+        );
+
+    }
+
     @PostMapping("/conversations/{productId}/messages")
     public ResponseEntity<SendMessageResponseDto> sendMessage(
             @PathVariable int productId,

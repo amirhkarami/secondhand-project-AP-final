@@ -73,13 +73,22 @@ public class FavoriteService {
     }
 
     private ProductSummaryDto toSummaryDto(Product p) {
+        String imagePath = null;
+
+        if (p.getImages() != null && !p.getImages().isEmpty()) {
+            imagePath = p.getImages()
+                    .get(0)
+                    .getImagePath();
+        }
         return new ProductSummaryDto(
                 p.getId(),
                 p.getTitle(),
                 p.getPrice(),
                 p.getCity().getName(),
                 p.getCategory() != null ? p.getCategory().getName() : null,
-                p.getStatus().name()
+                p.getStatus().name(),
+                imagePath,
+                p.getUser() != null ? p.getUser().getUsername() : null   // ← خط جدید
         );
     }
 }

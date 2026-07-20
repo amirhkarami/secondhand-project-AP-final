@@ -73,7 +73,7 @@ public class ChatService {
             List<ChatMessage> lastMsgList = chatMessageRepository.findTop1ByConversationOrderBySentAtDesc(c);
             String lastMessage = lastMsgList.isEmpty() ? null : lastMsgList.get(0).getContent();
             LocalDateTime lastTime = lastMsgList.isEmpty() ? null : lastMsgList.get(0).getSentAt();
-            return new ConversationSummaryDto(c.getId(), c.getProduct().getTitle(), other.getUsername(), lastMessage, lastTime);
+            return new ConversationSummaryDto(c.getId(), c.getProduct().getTitle(), other.getUsername(), lastMessage, lastTime ,(long) c.getProduct().getId());
         }).collect(Collectors.toList());
     }
 
@@ -99,5 +99,55 @@ public class ChatService {
         return messages.stream()
                 .map(m -> new ChatMessageDto(m.getId(), m.getSender().getUsername(), m.getContent(), m.getSentAt(), m.isSeen()))
                 .collect(Collectors.toList());
+    }
+
+
+    public SendMessageResponseDto replyMessage(
+            Long conversationId,
+            String content,
+            String username
+    ) {
+
+        if (content == null || content.isBlank()) {
+            throw new ApiException("content cannot be empty", 400);
+        }
+
+
+        User sender = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ApiException("user not found", 404));
+
+
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new ApiException("conversation not found", 404));
+
+
+        boolean isParticipant =
+                conversation.getBuyer().getUsername().equals(username)
+                        ||
+                        conversation.getSeller().getUsername().equals(username);
+
+
+        if (!isParticipant) {
+            throw new ApiException("you are not part of this conversation", 403);
+        }
+
+
+        ChatMessage message = ChatMessage.builder()
+                .conversation(conversation)
+                .sender(sender)
+                .content(content)
+                .sentAt(LocalDateTime.now())
+                .seen(false)
+                .build();
+
+
+        chatMessageRepository.save(message);
+
+
+        return new SendMessageResponseDto(
+                conversation.getId(),
+                message.getId(),
+                message.getSentAt()
+        );
     }
 }

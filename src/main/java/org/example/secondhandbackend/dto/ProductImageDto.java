@@ -8,5 +8,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ProductImageDto {
     private Long id;
-    private String base64Data;
+    private String imagePath;
 }

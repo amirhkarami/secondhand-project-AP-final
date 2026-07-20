@@ -13,4 +13,5 @@ public class ConversationSummaryDto {
     private String otherUsername;
     private String lastMessage;
     private LocalDateTime lastMessageTime;
+    private Long productId;
 }
