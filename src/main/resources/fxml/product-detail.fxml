@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ir.ac.aut.secondhand.frontend.controller.ProductDetailController"
+            fitToWidth="true" hbarPolicy="NEVER" styleClass="transparent-scroll">
+    <content>
+        <VBox spacing="18" styleClass="content-view">
+            <padding><Insets top="24" right="32" bottom="36" left="32"/></padding>
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Button text="← Back" onAction="#onBack" styleClass="secondary-button"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="stateLabel" styleClass="muted-label"/>
+            </HBox>
+            <HBox fx:id="thumbnails"
+                  spacing="10"
+                  alignment="CENTER"/>
+            <HBox spacing="28" alignment="TOP_LEFT">
+                <StackPane minWidth="420" prefWidth="460" minHeight="330" styleClass="detail-image-frame">
+                    <ImageView fx:id="productImage" fitWidth="430" fitHeight="310" preserveRatio="true"/>
+
+                    <Label fx:id="noImageLabel" text="No image" styleClass="muted-label"/>
+                </StackPane>
+                <VBox spacing="12" HBox.hgrow="ALWAYS">
+                    <Label fx:id="titleLabel" text="Advertisement title" wrapText="true" styleClass="detail-title"/>
+                    <Label fx:id="priceLabel" text="0" styleClass="detail-price"/>
+                    <HBox spacing="8">
+                        <Label text="Status:" styleClass="muted-label"/>
+                        <Label fx:id="statusLabel" styleClass="status-badge"/>
+                    </HBox>
+                    <GridPane hgap="12" vgap="9">
+                        <Label text="Category" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="muted-label"/>
+                        <Label fx:id="categoryLabel" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                        <Label text="City" GridPane.rowIndex="1" GridPane.columnIndex="0" styleClass="muted-label"/>
+                        <Label fx:id="cityLabel" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                        <Label text="Seller" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="muted-label"/>
+                        <Label fx:id="ownerLabel" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                        <Label text="Seller rating" GridPane.rowIndex="3" GridPane.columnIndex="0" styleClass="muted-label"/>
+                        <Label fx:id="ratingLabel" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    </GridPane>
+                    <Label fx:id="rejectReasonLabel" wrapText="true" styleClass="error-label"/>
+                    <FlowPane hgap="8" vgap="8">
+                        <Button fx:id="favoriteButton" text="Add to favorites" onAction="#onFavorite" styleClass="primary-button"/>
+                        <Button fx:id="messageButton" text="Message seller" onAction="#onMessage" styleClass="primary-button"/>
+                        <Button fx:id="rateButton" text="Rate seller" onAction="#onRate" styleClass="secondary-button"/>
+                        <Button fx:id="editButton" text="Edit" onAction="#onEdit" styleClass="secondary-button"/>
+                        <Button fx:id="soldButton" text="Mark sold" onAction="#onSold" styleClass="secondary-button"/>
+                        <Button fx:id="deleteButton" text="Delete" onAction="#onDelete" styleClass="danger-button"/>
+                    </FlowPane>
+                </VBox>
+            </HBox>
+            <Label text="Description" styleClass="section-title"/>
+            <TextArea fx:id="descriptionArea" editable="false" wrapText="true" prefRowCount="8"/>
+        </VBox>
+    </content>
+</ScrollPane>

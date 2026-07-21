@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ir.ac.aut.secondhand.frontend.controller.MainController"
+            styleClass="app-root">
+    <left>
+        <VBox prefWidth="235" spacing="8" styleClass="sidebar">
+            <padding><Insets top="24" right="16" bottom="20" left="16"/></padding>
+            <Label text="Second Hand" styleClass="sidebar-brand"/>
+            <Separator/>
+            <Label text="Signed in as" styleClass="muted-light-label"/>
+            <Label fx:id="usernameLabel" styleClass="sidebar-user"/>
+            <Label fx:id="roleLabel" styleClass="role-badge"/>
+            <Separator/>
+            <Button text="Browse advertisements" onAction="#onProducts" maxWidth="Infinity" styleClass="sidebar-button"/>
+            <Button fx:id="loginButton" text="sign in" onAction="#onLogin" maxWidth="Infinity" styleClass="sidebar-button"/>
+            <Button fx:id="registerButton" text="sign up" onAction="#onRegister" maxWidth="Infinity"
+                    styleClass="sidebar-button"/>
+            <Button fx:id="newProductButton" text="New advertisement" onAction="#onNewProduct" maxWidth="Infinity" styleClass="sidebar-button"/>
+            <Button fx:id="favoritesButton" text="Favorites" onAction="#onFavorites" maxWidth="Infinity" styleClass="sidebar-button"/>
+            <Button fx:id="conversationsButton" text="Conversations" onAction="#onConversations" maxWidth="Infinity" styleClass="sidebar-button"/>
+            <Separator/>
+            <Button fx:id="adminDashboardButton" text="Admin dashboard" onAction="#onAdminDashboard" maxWidth="Infinity" styleClass="sidebar-button"/>
+            <Button fx:id="adminPendingButton" text="Pending advertisements" onAction="#onAdminPending" maxWidth="Infinity" styleClass="sidebar-button"/>
+            <Button fx:id="adminUsersButton" text="Manage users" onAction="#onAdminUsers" maxWidth="Infinity" styleClass="sidebar-button"/>
+            <Button fx:id="adminLookupsButton" text="Categories and cities" onAction="#onAdminLookups" maxWidth="Infinity" styleClass="sidebar-button"/>
+            <Region VBox.vgrow="ALWAYS"/>
+            <Button fx:id="logoutButton" text="Sign out" onAction="#onLogout" maxWidth="Infinity" styleClass="danger-outline-button"/>
+            
+        </VBox>
+    </left>
+    <center>
+        <StackPane fx:id="contentPane" styleClass="content-host"/>
+    </center>
+</BorderPane>

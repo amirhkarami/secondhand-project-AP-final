@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ir.ac.aut.secondhand.frontend.controller.admin.AdminDashboardController"
+      spacing="18" styleClass="content-view">
+    <padding><Insets top="26" right="30" bottom="30" left="30"/></padding>
+    <HBox alignment="CENTER_LEFT">
+        <VBox>
+            <Label text="Administrator dashboard" styleClass="page-title"/>
+            <Label fx:id="stateLabel" styleClass="muted-label"/>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Refresh" onAction="#onRefresh" styleClass="secondary-button"/>
+    </HBox>
+    <TilePane hgap="16" vgap="16" prefColumns="3">
+        <VBox styleClass="stat-card"><Label text="Total users" styleClass="muted-label"/><Label fx:id="totalUsersLabel" text="0" styleClass="stat-number"/></VBox>
+        <VBox styleClass="stat-card"><Label text="Total products" styleClass="muted-label"/><Label fx:id="totalProductsLabel" text="0" styleClass="stat-number"/></VBox>
+        <VBox styleClass="stat-card"><Label text="Pending products" styleClass="muted-label"/><Label fx:id="pendingProductsLabel" text="0" styleClass="stat-number"/></VBox>
+        <VBox styleClass="stat-card"><Label text="Active products" styleClass="muted-label"/><Label fx:id="activeProductsLabel" text="0" styleClass="stat-number"/></VBox>
+        <VBox styleClass="stat-card"><Label text="Blocked users" styleClass="muted-label"/><Label fx:id="blockedUsersLabel" text="0" styleClass="stat-number"/></VBox>
+    </TilePane>
+    <HBox spacing="10">
+        <Button text="Review pending advertisements" onAction="#onPending" styleClass="primary-button"/>
+        <Button text="Manage users" onAction="#onUsers" styleClass="secondary-button"/>
+    </HBox>
+</VBox>

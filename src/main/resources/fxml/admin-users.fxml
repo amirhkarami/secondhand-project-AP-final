@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ir.ac.aut.secondhand.frontend.controller.admin.AdminUsersController"
+      spacing="14" styleClass="content-view">
+    <padding><Insets top="24" right="28" bottom="28" left="28"/></padding>
+    <HBox alignment="CENTER_LEFT">
+        <VBox><Label text="Manage users" styleClass="page-title"/><Label fx:id="stateLabel" styleClass="muted-label"/></VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Refresh" onAction="#onRefresh" styleClass="secondary-button"/>
+    </HBox>
+    <TableView fx:id="usersTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="idColumn" text="ID" prefWidth="65"/>
+            <TableColumn fx:id="usernameColumn" text="Username" prefWidth="150"/>
+            <TableColumn fx:id="nameColumn" text="Full name" prefWidth="200"/>
+            <TableColumn fx:id="phoneColumn" text="Phone" prefWidth="150"/>
+            <TableColumn fx:id="roleColumn" text="Role" prefWidth="100"/>
+            <TableColumn fx:id="activeColumn" text="Status" prefWidth="110"/>
+        </columns>
+    </TableView>
+    <HBox spacing="8">
+        <Button text="Block" onAction="#onBlock" styleClass="danger-button"/>
+        <Button text="Unblock" onAction="#onUnblock" styleClass="secondary-button"/>
+        <Button text="Promote to admin" onAction="#onPromote" styleClass="primary-button"/>
+    </HBox>
+</VBox>

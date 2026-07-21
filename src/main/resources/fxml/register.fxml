@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ir.ac.aut.secondhand.frontend.controller.RegisterController"
+            styleClass="auth-root">
+    <center>
+        <VBox alignment="CENTER" spacing="12" maxWidth="470" styleClass="auth-card">
+
+            <padding><Insets top="30" right="40" bottom="30" left="40"/></padding>
+            <Label text="Create account" styleClass="page-title"/>
+            <Label text="All fields are required" styleClass="muted-label"/>
+            <GridPane hgap="12" vgap="10">
+
+                <columnConstraints>
+                    <ColumnConstraints minWidth="120" halignment="RIGHT"/>
+                    <ColumnConstraints hgrow="ALWAYS" minWidth="260"/>
+                </columnConstraints>
+
+                <Label text="Full name" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <TextField fx:id="fullNameField" promptText="Full name" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <Label text="Username" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <TextField fx:id="usernameField" promptText="Username" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <Label text="Phone number" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <TextField fx:id="phoneField" promptText="Phone number" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                <Label text="Password" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <PasswordField fx:id="passwordField" promptText="Password" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                <Label text="Confirm password" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                <PasswordField fx:id="confirmPasswordField" promptText="Confirm password" GridPane.rowIndex="4" GridPane.columnIndex="1" onAction="#onRegister"/>
+            </GridPane>
+            <Button fx:id="registerButton" text="Create account" onAction="#onRegister" maxWidth="Infinity" styleClass="primary-button"/>
+            <Label fx:id="statusLabel" styleClass="muted-label"/>
+            <Button text="Back to sign in" onAction="#onBackToLogin" maxWidth="Infinity" styleClass="secondary-button"/>
+            <Button text="← Back to guest mode" onAction="#onBack" maxWidth="Infinity" styleClass="secondary-button"/>
+        </VBox>
+    </center>
+</BorderPane>
