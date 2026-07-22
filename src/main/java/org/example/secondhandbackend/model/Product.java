@@ -2,6 +2,8 @@ package org.example.secondhandbackend.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -41,9 +43,12 @@ public class Product {
     @Column(nullable = false)
     private ProductStatus status; // تغییر از productStatus به ProductStatus
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ProductImage> images;
-
+    @OneToMany(
+            mappedBy = "product",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<ProductImage> images = new ArrayList<>();
     @Column(length = 500)
     private String rejectReason;
 }

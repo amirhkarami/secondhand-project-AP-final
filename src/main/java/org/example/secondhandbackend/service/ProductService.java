@@ -241,27 +241,17 @@ public class ProductService {
         );
     }
 
-
-
-
     public void editProduct(int id, String title, String description, Long price, Integer categoryId, Integer cityId, List<MultipartFile> images, String username) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ApiException("advertisement not found", 404));
-
-        User requester = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ApiException("user not found", 404));
-
+        Product product = productRepository.findById(id).orElseThrow(() -> new ApiException("advertisement not found", 404));
+        User requester = userRepository.findByUsername(username).orElseThrow(() -> new ApiException("user not found", 404));
         boolean isOwner = product.getUser().getUsername().equals(username);
         boolean isAdmin = requester.getType() == UserType.ADMIN;
-
         if (!isOwner && !isAdmin) {
             throw new ApiException("you do not own this advertisement", 403);
         }
-
         if (product.getStatus() == ProductStatus.SOLD || product.getStatus() == ProductStatus.DELETED) {
             throw new ApiException("advertisement is sold or deleted", 400);
         }
-
         if (title != null && !title.isBlank()) {
             product.setTitle(title);
         }
@@ -284,36 +274,23 @@ public class ProductService {
                     .orElseThrow(() -> new ApiException("city not found", 404));
             product.setCity(city);
         }
-
         product.setStatus(ProductStatus.PENDING);
         product.setRejectReason(null);
-
-        productRepository.save(product);
-        // this is for edit
         if (images != null && !images.isEmpty()) {
-
-            List<ProductImage> productImages = new ArrayList<>();
-
-            for (MultipartFile file : images) {
-
+            if(product.getImages() == null){
+                product.setImages(new ArrayList<>());
+            }
+            for(MultipartFile file : images){
                 try {
-
                     String imageUrl = cloudinaryService.upload(file);
-
-                    ProductImage image = ProductImage.builder()
-                            .imagePath(imageUrl)
-                            .product(product)
-                            .build();
-
-                    productImages.add(image);
-
-                } catch (Exception e) {
-                    throw new ApiException("unable to process image",400);
+                    ProductImage image = ProductImage.builder().imagePath(imageUrl).product(product).build();
+                    product.getImages().add(image);
+                } catch(Exception e){
+                    throw new ApiException("unable to process image", 400);
                 }
             }
-
-            product.setImages(productImages);
         }
+        productRepository.save(product);
     }
 
     public void deleteProduct(int id, String username) {
