@@ -403,11 +403,12 @@ Error:
 
 the UML design:
 
-classDiagram
-direction TB
+
 
 
 ```mermaid
+    classDiagram
+    direction TB
     class User {
         -int id
         -String username
