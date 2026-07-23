@@ -38,11 +38,9 @@ public class CityService {
         boolean usedByProducts = productRepository.findAll().stream()
                 .anyMatch(p -> p.getCity() != null && p.getCity().getId() == id);
 
-/*
         if (usedByProducts) {
             throw new ApiException("this city is used by existing advertisements and cannot be deleted", 400);
         }
-*/
 
         cityRepository.deleteById(id);
     }

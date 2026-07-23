@@ -4,17 +4,22 @@ package org.example.secondhandbackend.service;
 import org.example.secondhandbackend.exception.ApiException;
 import org.example.secondhandbackend.model.Category;
 import org.example.secondhandbackend.repository.CategoryRepository;
+import org.example.secondhandbackend.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public CategoryService(CategoryRepository categoryRepository) {
+    private final ProductRepository productRepository;
+
+    public CategoryService(CategoryRepository categoryRepository, ProductRepository productRepository) {
         this.categoryRepository = categoryRepository;
+        this.productRepository = productRepository;
     }
 
     public List<Category> getAll() {
@@ -48,6 +53,12 @@ public class CategoryService {
 
         if (isSuperOfOthers) {
             throw new ApiException("this category is the superCategory of other Categories and cannot be deleted", 400);
+        }
+
+        boolean usedByProducts = productRepository.findAll().stream()
+                .anyMatch(p -> p.getCategory() != null && Objects.equals(p.getCategory().getId(), id));
+        if (usedByProducts) {
+            throw new ApiException("this category is used by existing advertisements and cannot be deleted", 400);
         }
 
         categoryRepository.deleteById(id);
