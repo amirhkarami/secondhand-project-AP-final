@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ir.ac.aut.secondhand.frontend.controller.ConversationsController"
+            styleClass="content-view">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="12">
+            <padding><Insets top="22" right="26" bottom="14" left="26"/></padding>
+            <VBox>
+                <Label text="Conversations" styleClass="page-title"/>
+                <Label fx:id="stateLabel" styleClass="muted-label"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Refresh" onAction="#onRefresh" styleClass="secondary-button"/>
+        </HBox>
+    </top>
+    <center>
+        <SplitPane dividerPositions="0.33">
+            <items>
+                <VBox spacing="8" styleClass="panel-card">
+                    <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                    <Label text="Your conversations" styleClass="section-title"/>
+                    <ListView fx:id="conversationsList" VBox.vgrow="ALWAYS"/>
+                </VBox>
+                <VBox spacing="10" styleClass="panel-card">
+                    <padding><Insets top="14" right="14" bottom="14" left="14"/></padding>
+                    <Label fx:id="conversationTitle" text="Select a conversation" styleClass="section-title"/>
+                    <ListView fx:id="messagesList" VBox.vgrow="ALWAYS"/>
+                    <HBox spacing="8">
+                        <TextField fx:id="messageField" promptText="Write a message" HBox.hgrow="ALWAYS" onAction="#onSend"/>
+                        <Button fx:id="sendButton" text="Send" onAction="#onSend" styleClass="primary-button"/>
+                    </HBox>
+                </VBox>
+            </items>
+        </SplitPane>
+    </center>
+</BorderPane>

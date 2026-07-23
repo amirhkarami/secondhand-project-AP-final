@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ir.ac.aut.secondhand.frontend.controller.admin.AdminLookupsController"
+      spacing="14" styleClass="content-view">
+    <padding><Insets top="24" right="28" bottom="28" left="28"/></padding>
+    <HBox alignment="CENTER_LEFT">
+        <VBox><Label text="Categories and cities" styleClass="page-title"/><Label fx:id="stateLabel" styleClass="muted-label"/></VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Refresh" onAction="#onRefresh" styleClass="secondary-button"/>
+    </HBox>
+    <HBox spacing="18" VBox.vgrow="ALWAYS">
+        <VBox spacing="10" HBox.hgrow="ALWAYS" styleClass="panel-card">
+            <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+            <Label text="Categories" styleClass="section-title"/>
+            <ListView fx:id="categoriesList" VBox.vgrow="ALWAYS"/>
+            <TextField fx:id="categoryIdField" promptText="Optional category ID"/>
+            <TextField fx:id="categoryNameField" promptText="New category name"/>
+            <ComboBox fx:id="superCategoryCombo" promptText="Optional super category" maxWidth="Infinity"/>
+            <HBox spacing="8"><Button text="Create" onAction="#onCreateCategory" styleClass="primary-button"/><Button text="Delete selected" onAction="#onDeleteCategory" styleClass="danger-button"/></HBox>
+        </VBox>
+        <VBox spacing="10" HBox.hgrow="ALWAYS" styleClass="panel-card">
+            <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+            <Label text="Cities" styleClass="section-title"/>
+            <ListView fx:id="citiesList" VBox.vgrow="ALWAYS"/>
+            <TextField fx:id="cityNameField" promptText="New city name"/>
+            <HBox spacing="8"><Button text="Create city" onAction="#onCreateCity" styleClass="primary-button"/><Button text="Delete selected" onAction="#onDeleteCity" styleClass="danger-button"/></HBox>
+        </VBox>
+    </HBox>
+</VBox>

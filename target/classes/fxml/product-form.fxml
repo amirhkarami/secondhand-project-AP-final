@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ir.ac.aut.secondhand.frontend.controller.ProductFormController"
+            fitToWidth="true" hbarPolicy="NEVER" styleClass="transparent-scroll">
+    <content>
+        <VBox spacing="16" maxWidth="850" styleClass="content-view">
+            <padding><Insets top="28" right="34" bottom="36" left="34"/></padding>
+            <Label fx:id="pageTitle" text="Create a new advertisement" styleClass="page-title"/>
+            <Label text="The advertisement will be stored with PENDING status until an administrator approves it."
+                   wrapText="true" styleClass="muted-label"/>
+            <GridPane hgap="14" vgap="14" styleClass="form-panel">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="145" halignment="RIGHT"/>
+                    <ColumnConstraints hgrow="ALWAYS" minWidth="400"/>
+                </columnConstraints>
+                <Label text="Title *" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <TextField fx:id="titleField" promptText="Advertisement title" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <Label text="Description" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <TextArea fx:id="descriptionArea" promptText="Describe the item" prefRowCount="6" wrapText="true" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <Label text="Price *" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <TextField fx:id="priceField" promptText="Positive integer" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                <Label text="Category *" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <ComboBox fx:id="categoryCombo" promptText="Select category" maxWidth="Infinity" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                <Label text="City *" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                <ComboBox fx:id="cityCombo" promptText="Select city" maxWidth="Infinity" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                <Label text="Images" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                <VBox spacing="8" GridPane.rowIndex="5" GridPane.columnIndex="1">
+                    <HBox spacing="8">
+                        <Button text="Choose images" onAction="#onChooseImages" styleClass="secondary-button"/>
+                        <Button text="Clear" onAction="#onClearImages" styleClass="secondary-button"/>
+                    </HBox>
+                    <FlowPane fx:id="imageContainer" hgap="10" vgap="10" prefWrapLength="500"/>
+                    <ListView fx:id="imageList" prefHeight="80"/>
+                </VBox>
+            </GridPane>
+            <Label fx:id="stateLabel" styleClass="muted-label"/>
+            <HBox spacing="10">
+                <Button fx:id="submitButton" text="Submit for review" onAction="#onSubmit" styleClass="primary-button"/>
+                <Button text="Cancel" onAction="#onCancel" styleClass="secondary-button"/>
+            </HBox>
+        </VBox>
+    </content>
+</ScrollPane>

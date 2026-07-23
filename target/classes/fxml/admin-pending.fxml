@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ir.ac.aut.secondhand.frontend.controller.admin.AdminPendingController"
+      spacing="14" styleClass="content-view">
+    <padding><Insets top="24" right="28" bottom="28" left="28"/></padding>
+    <HBox alignment="CENTER_LEFT">
+        <VBox><Label text="Pending advertisements" styleClass="page-title"/><Label fx:id="stateLabel" styleClass="muted-label"/></VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Refresh" onAction="#onRefresh" styleClass="secondary-button"/>
+    </HBox>
+    <TableView fx:id="productsTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="idColumn" text="ID" prefWidth="70"/>
+            <TableColumn fx:id="titleColumn" text="Title" prefWidth="260"/>
+            <TableColumn fx:id="ownerColumn" text="Owner" prefWidth="150"/>
+            <TableColumn fx:id="priceColumn" text="Price" prefWidth="130"/>
+            <TableColumn fx:id="categoryColumn" text="Category" prefWidth="150"/>
+            <TableColumn fx:id="cityColumn" text="City" prefWidth="130"/>
+        </columns>
+    </TableView>
+    <HBox spacing="8">
+        <Button text="View details" onAction="#onView" styleClass="secondary-button"/>
+        <Button text="Approve" onAction="#onApprove" styleClass="primary-button"/>
+        <Button text="Reject" onAction="#onReject" styleClass="secondary-button"/>
+        <Button text="Delete" onAction="#onDelete" styleClass="danger-button"/>
+    </HBox>
+</VBox>
