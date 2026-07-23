@@ -27,13 +27,8 @@ public final class ApiClient {
 
     public ApiClient(AppConfig config) {
         this.config = config;
-        this.httpClient = HttpClient.newBuilder()
-                .connectTimeout(config.getConnectTimeout())
-                .build();
-        this.objectMapper = new ObjectMapper()
-                .registerModule(new JavaTimeModule())
-                .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        this.httpClient = HttpClient.newBuilder().connectTimeout(config.getConnectTimeout()).build();
+        this.objectMapper = new ObjectMapper().registerModule(new JavaTimeModule()).setSerializationInclusion(JsonInclude.Include.NON_NULL).configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     public ObjectMapper getObjectMapper() {

@@ -103,8 +103,6 @@ public void setEditingProduct(ProductDetailDto product) {
         priceField.setText(
                 String.valueOf(product.getPrice())
         );
-
-
         loadExistingImages();
     }
 
@@ -112,48 +110,17 @@ public void setEditingProduct(ProductDetailDto product) {
     @FXML
     private void onChooseImages() {
 
-
         FileChooser chooser = new FileChooser();
-
         chooser.setTitle("Select advertisement images");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.webp"));
 
-
-        chooser.getExtensionFilters()
-                .add(
-                        new FileChooser.ExtensionFilter(
-                                "Images",
-                                "*.png",
-                                "*.jpg",
-                                "*.jpeg",
-                                "*.webp"
-                        )
-                );
-
-
-        List<File> files =
-                chooser.showOpenMultipleDialog(
-                        submitButton.getScene().getWindow()
-                );
-
+        List<File> files = chooser.showOpenMultipleDialog(submitButton.getScene().getWindow());
 
         if(files != null){
-
-
-            files.stream()
-                    .map(File::toPath)
-                    .forEach(selectedImages::add);
-
-
-            imageList.getItems()
-                    .addAll(
-                            files.stream()
-                                    .map(File::getName)
-                                    .toList()
-                    );
+            files.stream().map(File::toPath).forEach(selectedImages::add);
+            imageList.getItems().addAll(files.stream().map(File::getName).toList());
         }
     }
-
-
 
     @FXML
     private void onClearImages() {
